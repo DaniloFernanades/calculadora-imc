@@ -1,23 +1,50 @@
-const numero1 = await askQuestion("Digite o primeiro número: ");
-const numero2 = await askQuestion("Digite o primeiro número: ");
+const readline = require('readline');
 
-function calcular(numero1, numero2) {
-    let result = 0;
-    switch (operador) {
-        case '+':
-            result = numero1 + numero2
-        case '-':
-            result = numero1 - numero2
-        case '*':
-            result = numero1 * numero2
-        case '/':
-            if (numero1 != 0 && numero2 != 0) {
-                result = numero1 / numero2
-            }
-        default:
-            return 'operacao invalida'
-    }
-    return result
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+function askQuestion(query) {
+    return new Promise(resolve => rl.question(query, resolve));
 }
 
-calcular(numero1, numero2)
+async function runCalculator() {
+    console.log("Calculadora de IMC");
+    console.log("----------------------------");
+
+    const pesoString = await askQuestion("Digite seu peso (em kg): ");
+    const alturaString = await askQuestion("Digite sua altura (em metros): ");
+
+    const peso = parseFloat(pesoString);
+    const altura = parseFloat(alturaString);
+
+    if (isNaN(peso) || isNaN(altura) || altura <= 0) {
+        console.log("Erro: digite valores válidos para peso e altura.");
+        rl.close();
+        return;
+    }
+
+    const imc = peso / (altura * altura);
+
+    console.log("----------------------------");
+    console.log(`Seu IMC é: ${imc.toFixed(2)}`);
+
+    if (imc < 18.5) {
+        console.log("Classificação: Abaixo do peso");
+    } else if (imc >= 18.5 && imc < 24.9) {
+        console.log("Classificação: Peso normal");
+    } else if (imc >= 25 && imc < 29.9) {
+        console.log("Classificação: Sobrepeso");
+    } else if (imc >= 30 && imc < 34.9) {
+        console.log("Classificação: Obesidade grau 1");
+    } else if (imc >= 35 && imc < 39.9) {
+        console.log("Classificação: Obesidade grau 2");
+    } else {
+        console.log("Classificação: Obesidade grau 3");
+    }
+
+    rl.close();
+}
+
+runCalculator();
